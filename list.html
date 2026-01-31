@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>오늘의 작은 계획 · baeyeob Daily</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- 폰트: 살짝 귀여운 느낌 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #fff7fb;
+      --bg2: #f8fbff;
+      --card: #ffffff;
+      --text-main: #42343a;
+      --text-muted: #8f7d86;
+      --border: #f0e1f0;
+      --accent: #ff8fb8;
+      --accent-strong: #ff6f9f;
+      --accent-soft: #ffe3f0;
+      --accent-blue: #9cd4ff;
+      --accent-mint: #b9f3e4;
+      --danger: #ff6b6b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top left, #ffeaf5 0, #fefcff 40%, #e9f5ff 100%);
+      color: var(--text-main);
+      font-family: "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      padding: 20px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 480px;
+      background: linear-gradient(145deg, #fffefe, #fff8ff);
+      border-radius: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow:
+        0 22px 60px rgba(171, 132, 163, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.9) inset;
+      padding: 22px 20px 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 귀여운 동그라미 장식 */
+    .bubble {
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(0.5px);
+      opacity: 0.55;
+      pointer-events: none;
+    }
+
+    .bubble.pink {
+      width: 90px; height: 90px;
+      background: radial-gradient(circle, #ffd6ec, #ffb3d7);
+      top: -20px; right: -10px;
+    }
+    .bubble.blue {
+      width: 70px; height: 70px;
+      background: radial-gradient(circle, #d9f0ff, #9cd4ff);
+      bottom: -18px; left: -5px;
+    }
+    .bubble.mint {
+      width: 50px; height: 50px;
+      background: radial-gradient(circle, #e4fff4, #b9f3e4);
+      top: 40%; left: -25px;
+    }
+
+    .app-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .app-header {
+      margin-bottom: 14px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .title-block {
+      max-width: 70%;
+    }
+
+    .kicker {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .title-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ffe3f0, #ffbdd9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      box-shadow: 0 6px 14px rgba(255, 143, 184, 0.4);
+    }
+
+    .title-text {
+      font-family: "Baloo 2", system-ui, sans-serif;
+      font-size: 22px;
+      letter-spacing: 0.01em;
+    }
+
+    .subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .date-pill {
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #fff6ff, #f2f7ff);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      font-size: 11px;
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 5px 12px rgba(204, 177, 214, 0.25);
+    }
+
+    .date-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: radial-gradient(circle, #ff9dc1, #ff6f9f);
+    }
+
+    .status-row {
+      margin: 12px 0 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+
+    .status-row span strong {
+      color: var(--text-main);
+    }
+
+    .badge-soft {
+      border-radius: 999px;
+      padding: 4px 10px;
+      background: var(--accent-soft);
+      color: var(--accent-strong);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    /* 오늘의 세 가지 */
+    .tasks {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .task-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.95);
+      transition: border-color 0.2s ease, background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    }
+
+    .task-row:focus-within {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(255, 143, 184, 0.25);
+    }
+
+    .checkbox-wrap {
+      width: 20px;
+      height: 20px;
+      border-radius: 8px;
+      border: 1px solid #f1d5e8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, #fff6fd, #ffe9f6);
+      cursor: pointer;
+      position: relative;
+      box-shadow: 0 3px 8px rgba(216, 167, 196, 0.35);
+    }
+
+    .checkbox-input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .checkbox-visual {
+      width: 11px;
+      height: 11px;
+      border-radius: 4px;
+      background: transparent;
+      transition: background 0.18s ease, transform 0.18s ease;
+    }
+
+    .checkbox-input:checked + .checkbox-visual {
+      background: linear-gradient(135deg, #ff9dc1, #ff6f9f);
+      transform: scale(1.05);
+    }
+
+    .task-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 13px;
+      outline: none;
+      padding: 4px 0;
+      color: var(--text-main);
+    }
+
+    .task-input::placeholder {
+      color: #cfbfd0;
+    }
+
+    .task-row.completed {
+      background: #fff0f6;
+      border-color: #ffc3de;
+    }
+
+    .task-row.completed .task-input {
+      text-decoration: line-through;
+      color: #b59baa;
+    }
+
+    /* 습관 */
+    .habits {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 8px 10px;
+      border-radius: 16px;
+      border: 1px dashed #f0d7f6;
+      background: linear-gradient(135deg, rgba(255, 230, 249, 0.9), rgba(228, 245, 255, 0.8));
+    }
+
+    .habit-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .habit-checkbox {
+      width: 17px;
+      height: 17px;
+      border-radius: 999px;
+      border: 1px solid #ffd2ea;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      background: #fffafc;
+      box-shadow: 0 3px 8px rgba(219, 175, 215, 0.35);
+    }
+
+    .habit-checkbox input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .habit-checkbox span {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: transparent;
+      transition: background 0.18s ease, transform 0.18s ease;
+    }
+
+    .habit-checkbox input:checked + span {
+      background: linear-gradient(135deg, #ffd66b, #ffac6b);
+      transform: scale(1.05);
+    }
+
+    .habit-label-main {
+      font-size: 12px;
+      color: var(--text-main);
+    }
+
+    .habit-label-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* 기분 선택 */
+    .mood-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 16px;
+      border: 1px solid #e6e5ff;
+      background: linear-gradient(135deg, #f7f4ff, #fef7ff);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .mood-options {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .mood-btn {
+      border-radius: 999px;
+      border: 1px solid transparent;
+      padding: 3px 8px;
+      font-size: 13px;
+      cursor: pointer;
+      background: transparent;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    }
+
+    .mood-btn span { margin-right: 2px; }
+
+    .mood-btn.selected {
+      background: #fff;
+      color: var(--text-main);
+      border-color: #cfc3ff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(148, 130, 231, 0.4);
+    }
+
+    /* 메모 영역 */
+    .note-box {
+      margin-top: 2px;
+      padding: 9px 10px 8px;
+      border-radius: 18px;
+      border: 1px solid #f2e0ff;
+      background: linear-gradient(145deg, #fffafd, #fef5ff);
+    }
+
+    .note-textarea {
+      width: 100%;
+      border: none;
+      resize: vertical;
+      min-height: 44px;
+      max-height: 120px;
+      font-size: 12px;
+      outline: none;
+      background: transparent;
+      color: var(--text-main);
+    }
+
+    .note-textarea::placeholder {
+      color: #d2c3dd;
+    }
+
+    .note-caption {
+      margin-top: 4px;
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .note-caption span { opacity: 0.9; }
+
+    .controls-row {
+      margin-top: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: var(--text-muted);
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .reset-btn {
+      border-radius: 999px;
+      border: none;
+      padding: 6px 12px;
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      background: transparent;
+      color: var(--danger);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      opacity: 0.85;
+      transition: background 0.2s ease, opacity 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .reset-btn:hover {
+      background: rgba(255, 188, 188, 0.18);
+      opacity: 1;
+    }
+
+    @media (max-width: 480px) {
+      .app { padding: 18px 16px 16px; }
+      .title-text { font-size: 20px; }
+      .subtitle { font-size: 11px; }
+      .task-input { font-size: 12px; }
+      .mood-row { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- 장식 버블 -->
+    <div class="bubble pink"></div>
+    <div class="bubble blue"></div>
+    <div class="bubble mint"></div>
+
+    <div class="app-inner">
+      <header class="app-header">
+        <div class="title-block">
+          <div class="kicker">baeyeob daily</div>
+          <div class="title-row">
+            <div class="title-icon">🧸</div>
+            <div class="title-text">오늘의 작은 계획</div>
+          </div>
+          <p class="subtitle">
+            오늘 딱 세 가지만 신중하게 고르고,
+            가볍게 챙길 습관과 기분까지 기록해 보아요.
+          </p>
+        </div>
+        <div class="date-pill">
+          <span class="date-dot"></span>
+          <span id="today-date">2026. 1. 31.</span>
+        </div>
+      </header>
+
+      <div class="status-row">
+        <span>
+          할 일 <strong id="count-text">0 / 3</strong> · 완료 <strong id="done-text">0</strong> ·
+          습관 <strong id="habit-done-text">0 / 3</strong>
+        </span>
+        <span class="badge-soft" id="status-badge">
+          여유로운 하루
+        </span>
+      </div>
+
+      <main>
+        <!-- 오늘의 세 가지 -->
+        <section>
+          <div class="section-label">오늘의 세 가지</div>
+          <div class="tasks" id="tasks"></div>
+        </section>
+
+        <!-- 오늘의 습관 -->
+        <section>
+          <div class="section-label">오늘의 습관</div>
+          <div class="habits" id="habits"></div>
+        </section>
+
+        <!-- 기분 선택 -->
+        <section>
+          <div class="section-label">오늘 기분</div>
+          <div class="mood-row">
+            <span id="mood-label">오늘 하루를 이모지 하나로 고른다면?</span>
+            <div class="mood-options">
+              <button class="mood-btn" data-mood="tired" type="button">
+                <span>😪</span>피곤
+              </button>
+              <button class="mood-btn" data-mood="ok" type="button">
+                <span>😐</span>그럭저럭
+              </button>
+              <button class="mood-btn" data-mood="good" type="button">
+                <span>🙂</span>괜찮았어
+              </button>
+              <button class="mood-btn" data-mood="great" type="button">
+                <span>😄</span>뿌듯해
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 메모 영역 -->
+        <section>
+          <div class="section-label">내일에게 보내는 메모</div>
+          <div class="note-box">
+            <textarea
+              id="note-text"
+              class="note-textarea"
+              placeholder="오늘 다 못 한 일, 내일의 나에게 남기고 싶은 말, 짧은 일기 한 줄도 좋아요 :)"
+            ></textarea>
+            <div class="note-caption">
+          </div>
+        </section>
+
+        <div class="controls-row">
+          <span>창을 닫았다가 다시 열어도 오늘 기록은 그대로예요.</span>
+          <button class="reset-btn" id="reset-btn" type="button">
+            내일로 새로 시작하기
+          </button>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "cozy_daily_with_habits_v1";
+
+    function formatKoreanDate(date) {
+      const y = date.getFullYear();
+      const m = date.getMonth() + 1;
+      const d = date.getDate();
+      const weekdayNames = ["일", "월", "화", "수", "목", "금", "토"];
+      const w = weekdayNames[date.getDay()];
+      return `${y}. ${m}. ${d}. (${w})`;
+    }
+
+    function getDefaultData() {
+      return {
+        tasks: [
+          { text: "", done: false },
+          { text: "", done: false },
+          { text: "", done: false },
+        ],
+        habits: [
+          { key: "water", done: false },
+          { key: "stretch", done: false },
+          { key: "read", done: false },
+        ],
+        mood: null,
+        note: "",
+      };
+    }
+
+    const HABIT_META = {
+      water: { title: "물 6잔 마시기", desc: "하루 종일 물 자주 마시기" },
+      stretch: { title: "10분 스트레칭", desc: "몸 한번 쭉 펴주기" },
+      read: { title: "10분 읽기", desc: "가볍게라도 눈으로 글 읽기" },
+    };
+
+    function loadData() {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (!stored) return getDefaultData();
+        const parsed = JSON.parse(stored);
+        const base = getDefaultData();
+        return {
+          tasks: (parsed.tasks || base.tasks).slice(0, 3).concat(base.tasks).slice(0,3),
+          habits: (parsed.habits || base.habits).slice(0, 3).concat(base.habits).slice(0,3),
+          mood: parsed.mood || null,
+          note: parsed.note || "",
+        };
+      } catch (e) {
+        return getDefaultData();
+      }
+    }
+
+    function saveData(data) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function updateStatus(data) {
+      const { tasks, habits } = data;
+      const filled = tasks.filter((t) => t.text.trim() !== "").length;
+      const doneCount = tasks.filter((t) => t.done && t.text.trim() !== "").length;
+      const habitDone = habits.filter((h) => h.done).length;
+
+      document.getElementById("count-text").textContent = `${filled} / 3`;
+      document.getElementById("done-text").textContent = doneCount;
+      document.getElementById("habit-done-text").textContent = `${habitDone} / ${habits.length}`;
+
+      const badgeEl = document.getElementById("status-badge");
+
+      if (filled === 0 && habitDone === 0) {
+        badgeEl.textContent = "여유로운 하루";
+      } else if (doneCount === filled && filled > 0 && habitDone === habits.length) {
+        badgeEl.textContent = "완벽해 ✨";
+      } else if (filled === 3 && doneCount < filled) {
+        badgeEl.textContent = "집중 모드";
+      } else {
+        badgeEl.textContent = "조금씩만 해도 충분해요";
+      }
+    }
+
+    function renderTasks(data) {
+      const container = document.getElementById("tasks");
+      container.innerHTML = "";
+
+      data.tasks.forEach((task, index) => {
+        const row = document.createElement("div");
+        row.className = "task-row";
+        if (task.done && task.text.trim() !== "") {
+          row.classList.add("completed");
+        }
+
+        const checkboxWrap = document.createElement("label");
+        checkboxWrap.className = "checkbox-wrap";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.className = "checkbox-input";
+        checkbox.checked = !!task.done;
+
+        const checkboxVisual = document.createElement("span");
+        checkboxVisual.className = "checkbox-visual";
+
+        checkbox.addEventListener("change", () => {
+          data.tasks[index].done = checkbox.checked;
+          if (data.tasks[index].text.trim() === "") {
+            data.tasks[index].done = false;
+            checkbox.checked = false;
+          }
+          saveData(data);
+          updateStatus(data);
+          if (data.tasks[index].done && data.tasks[index].text.trim() !== "") {
+            row.classList.add("completed");
+          } else {
+            row.classList.remove("completed");
+          }
+        });
+
+        checkboxWrap.appendChild(checkbox);
+        checkboxWrap.appendChild(checkboxVisual);
+
+        const input = document.createElement("input");
+        input.type = "text";
+        input.className = "task-input";
+        input.placeholder = `할 일 ${index + 1}`;
+        input.value = task.text;
+
+        input.addEventListener("input", () => {
+          data.tasks[index].text = input.value;
+          if (input.value.trim() === "") {
+            data.tasks[index].done = false;
+            checkbox.checked = false;
+          }
+          saveData(data);
+          updateStatus(data);
+          if (data.tasks[index].done && data.tasks[index].text.trim() !== "") {
+            row.classList.add("completed");
+          } else {
+            row.classList.remove("completed");
+          }
+        });
+
+        row.appendChild(checkboxWrap);
+        row.appendChild(input);
+        container.appendChild(row);
+      });
+
+      updateStatus(data);
+    }
+
+    function renderHabits(data) {
+      const container = document.getElementById("habits");
+      container.innerHTML = "";
+
+      data.habits.forEach((habit, idx) => {
+        const meta = HABIT_META[habit.key] || { title: "습관", desc: "" };
+
+        const row = document.createElement("div");
+        row.className = "habit-row";
+
+        const box = document.createElement("label");
+        box.className = "habit-checkbox";
+
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.checked = !!habit.done;
+
+        const mark = document.createElement("span");
+
+        input.addEventListener("change", () => {
+          data.habits[idx].done = input.checked;
+          saveData(data);
+          updateStatus(data);
+        });
+
+        box.appendChild(input);
+        box.appendChild(mark);
+
+        const textWrap = document.createElement("div");
+        const main = document.createElement("div");
+        main.className = "habit-label-main";
+        main.textContent = meta.title;
+
+        const sub = document.createElement("div");
+        sub.className = "habit-label-sub";
+        sub.textContent = meta.desc;
+
+        textWrap.appendChild(main);
+        textWrap.appendChild(sub);
+
+        row.appendChild(box);
+        row.appendChild(textWrap);
+        container.appendChild(row);
+      });
+
+      updateStatus(data);
+    }
+
+    function renderMood(data) {
+      const buttons = Array.from(document.querySelectorAll(".mood-btn"));
+      const label = document.getElementById("mood-label");
+
+      buttons.forEach((btn) => {
+        const mood = btn.getAttribute("data-mood");
+        if (mood === data.mood) {
+          btn.classList.add("selected");
+        } else {
+          btn.classList.remove("selected");
+        }
+
+        btn.onclick = () => {
+          if (data.mood === mood) {
+            data.mood = null;
+          } else {
+            data.mood = mood;
+          }
+          saveData(data);
+          renderMood(data);
+        };
+      });
+
+      const moodTextMap = {
+        tired: "오늘은 조금 덜 해도 괜찮아요. 진짜로!",
+        ok: "그럭저럭 버틴 하루도 충분히 멋져요.",
+        good: "좋은 하루, 잘 챙기셨어요 💕",
+        great: "최고의 하루! 오늘의 나, 완전 칭찬해!",
+      };
+
+      if (!data.mood) {
+        label.textContent = "오늘 하루를 이모지 하나로 고른다면?";
+      } else {
+        label.textContent = moodTextMap[data.mood] || "오늘 하루를 이모지 하나로 고른다면?";
+      }
+    }
+
+    function renderNote(data) {
+      const textarea = document.getElementById("note-text");
+      const lengthEl = document.getElementById("note-length");
+      const max = 200;
+
+      textarea.value = data.note || "";
+      lengthEl.textContent = `${textarea.value.length} / ${max}`;
+
+      textarea.oninput = () => {
+        if (textarea.value.length > max) {
+          textarea.value = textarea.value.slice(0, max);
+        }
+        data.note = textarea.value;
+        lengthEl.textContent = `${textarea.value.length} / ${max}`;
+        saveData(data);
+      };
+    }
+
+    function init() {
+      document.getElementById("today-date").textContent = formatKoreanDate(new Date());
+      const data = loadData();
+
+      renderTasks(data);
+      renderHabits(data);
+      renderMood(data);
+      renderNote(data);
+
+      document.getElementById("reset-btn").addEventListener("click", () => {
+        if (!confirm("오늘 기록을 정리하고, 내일을 위해 새로 시작할까요?")) return;
+        const cleared = getDefaultData();
+        saveData(cleared);
+        renderTasks(cleared);
+        renderHabits(cleared);
+        renderMood(cleared);
+        renderNote(cleared);
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>
